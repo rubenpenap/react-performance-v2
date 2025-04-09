@@ -2,7 +2,6 @@ import { Suspense, lazy, useState } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import './index.css'
 
-// 🧝‍♂️ I just gave this arrow function a name and passed it to lazy
 const loadGlobe = () => import('./globe.tsx')
 const Globe = lazy(loadGlobe)
 
@@ -22,7 +21,8 @@ function App() {
 		>
 			<label
 				style={{ marginBottom: '1rem' }}
-				// 🐨 add onFocus and onPointerEnter events and set them to loadGlobe
+				onFocus={loadGlobe}
+				onPointerEnter={loadGlobe}
 			>
 				<input
 					type="checkbox"
