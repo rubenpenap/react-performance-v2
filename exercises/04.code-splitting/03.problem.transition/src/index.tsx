@@ -1,5 +1,6 @@
-import { Suspense, lazy, useState } from 'react'
+import { Suspense, lazy, useState, useTransition } from 'react'
 import * as ReactDOM from 'react-dom/client'
+import { useSpinDelay } from 'spin-delay'
 import './index.css'
 
 const loadGlobe = () => import('./globe.tsx')
@@ -7,9 +8,8 @@ const Globe = lazy(loadGlobe)
 
 function App() {
 	const [showGlobe, setShowGlobe] = useState(false)
-	// 🐨 get the startTransition function from useTransition
-
-	// 💯 use useSpinDelay to avoid a flash of pending state here
+	const [isTransitionPending, startTransition] = useTransition()
+	const isPending = useSpinDelay(isTransitionPending)
 
 	return (
 		<div
@@ -20,7 +20,7 @@ function App() {
 				justifyContent: 'center',
 				height: '100%',
 				padding: '2rem',
-				// 🐨 set the opacity to 0.6 if we're currently pending as a simple pending state
+				opacity: isPending ? 0.6 : 1,
 			}}
 		>
 			<label
@@ -31,8 +31,9 @@ function App() {
 				<input
 					type="checkbox"
 					checked={showGlobe}
-					// 🐨 wrap setShowGlobe in startTransition
-					onChange={(e) => setShowGlobe(e.currentTarget.checked)}
+					onChange={(e) =>
+						startTransition(() => setShowGlobe(e.currentTarget.checked))
+					}
 				/>
 				{' show globe'}
 			</label>
