@@ -63,15 +63,14 @@ function CityChooser() {
 				</div>
 				<ul {...getMenuProps({ style: { opacity: isPending ? 0.6 : 1 } })}>
 					{cities.map((city, index) => {
-						// 🐨 compute the isHighlighted and isSelected states here and pass them as props
+						const isSelected = selectedCity?.id === city.id
+						const isHighlighted = highlightedIndex === index
 						return (
 							<ListItem
 								key={city.id}
 								index={index}
-								// 💣 remove this prop
-								selectedCity={selectedCity}
-								// 💣 remove this prop
-								highlightedIndex={highlightedIndex}
+								isSelected={isSelected}
+								isHighlighted={isHighlighted}
 								city={city}
 								getItemProps={getItemProps}
 							/>
@@ -83,51 +82,34 @@ function CityChooser() {
 	)
 }
 
-const ListItem = memo(
-	function ListItem<City extends { id: string; name: string }>({
-		index,
-		city,
-		selectedCity,
-		highlightedIndex,
-		getItemProps,
-	}: {
-		index: number
-		city: City
-		// 🐨 remove this and replace it with an isSelected prop
-		selectedCity: City | null
-		// 🐨 remove this and replace it with an isHighlighted prop
-		highlightedIndex: number
-		getItemProps: UseComboboxPropGetters<City>['getItemProps']
-	}) {
-		const isSelected = selectedCity?.id === city.id
-		const isHighlighted = highlightedIndex === index
-		return (
-			<li
-				key={city.id}
-				{...getItemProps({
-					index,
-					item: city,
-					style: {
-						fontWeight: isSelected ? 'bold' : 'normal',
-						backgroundColor: isHighlighted ? 'lightgray' : 'inherit',
-					},
-				})}
-			>
-				{city.name}
-			</li>
-		)
-	},
-	// 💣 remove this custom comparator
-	(prevProps, nextProps) => {
-		const prevIsSelected = prevProps.selectedCity?.id === prevProps.city.id
-		const nextIsSelected = nextProps.selectedCity?.id === nextProps.city.id
-		const prevIsHighlighted = prevProps.highlightedIndex === prevProps.index
-		const nextIsHighlighted = nextProps.highlightedIndex === nextProps.index
-		return (
-			prevProps.index === nextProps.index &&
-			prevProps.city === nextProps.city &&
-			prevIsSelected === nextIsSelected &&
-			prevIsHighlighted === nextIsHighlighted
-		)
-	},
-)
+const ListItem = memo(function ListItem<
+	City extends { id: string; name: string },
+>({
+	index,
+	city,
+	isSelected,
+	isHighlighted,
+	getItemProps,
+}: {
+	index: number
+	city: City
+	isSelected: boolean
+	isHighlighted: boolean
+	getItemProps: UseComboboxPropGetters<City>['getItemProps']
+}) {
+	return (
+		<li
+			key={city.id}
+			{...getItemProps({
+				index,
+				item: city,
+				style: {
+					fontWeight: isSelected ? 'bold' : 'normal',
+					backgroundColor: isHighlighted ? 'lightgray' : 'inherit',
+				},
+			})}
+		>
+			{city.name}
+		</li>
+	)
+})
