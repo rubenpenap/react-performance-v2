@@ -110,8 +110,17 @@ const ListItem = memo(
 			</li>
 		)
 	},
-	// 🐨 add a custom comparator function here make sure to handle the following cases:
-	// 1. if the props "index", "city", or "getItemProps" change
-	// 2. if the item's "selected" state has changed
-	// 3. if the item's "highlighted" state has changed
+	(prevProps, nextProps) => {
+		const prevIsSelected = prevProps.selectedCity?.id === prevProps.city.id
+		const nextIsSelected = nextProps.selectedCity?.id === nextProps.city.id
+		const prevIsHighlighted = prevProps.highlightedIndex === prevProps.index
+		const nextIsHighlighted = nextProps.highlightedIndex === nextProps.index
+		return (
+			prevProps.index === nextProps.index &&
+			prevProps.city === nextProps.city &&
+			prevProps.getItemProps === nextProps.getItemProps &&
+			prevIsSelected === nextIsSelected &&
+			prevIsHighlighted === nextIsHighlighted
+		)
+	},
 )
